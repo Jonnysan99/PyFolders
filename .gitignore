@@ -1,160 +1,124 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
+# PyFolders
+organizza e gestisci i tuoi file con facilità! Questo progetto Python ti consente di creare cartelle personalizzate e spostare i file in modo efficiente.
+#STEP 1
 
-# C extensions
-*.so
+import os
+import shutil
+import csv
 
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+# Ottieni il percorso della directory corrente
+current_dir = os.getcwd()
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
+# Crea il percorso completo per la cartella "files"
+files_folder = os.path.join(current_dir, "files")
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+#verifica se il file di recap esiste già
+recap_file = os.path.join(files_folder, 'recap.csv')
+recap_exists = os.path.isfile(recap_file)
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-cover/
+# Lista dei tipi di file supportati e relative estensioni
+supported_extensions = {
+    'audio': ['.mp3'],
+    'docs': ['.txt', '.odt'],
+    'images': ['.png', '.jpg', '.jpeg']
+}
 
-# Translations
-*.mo
-*.pot
+# Spostamento nella cartella "files"
+os.chdir(files_folder)
 
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
+# Creazione delle cartelle di destinazione se non esistono
+for folder in supported_extensions.keys():
+    os.makedirs(folder, exist_ok=True)
 
-# Flask stuff:
-instance/
-.webassets-cache
+# Elaborazione dei file nella cartella "files"
+file_info = []  # Lista per tenere traccia delle informazioni dei file
 
-# Scrapy stuff:
-.scrapy
+for filename in sorted(os.listdir()):
+    file_path = os.path.join(files_folder, filename)
 
-# Sphinx documentation
-docs/_build/
+    # Ignora le sottocartelle e i file nascosti
+    if os.path.isdir(file_path) or filename.startswith('.'):
+        continue
 
-# PyBuilder
-.pybuilder/
-target/
+    # Informazioni sul file
+    name, ext = os.path.splitext(filename)
+    file_type = None
+    file_size = os.path.getsize(file_path)
 
-# Jupyter Notebook
-.ipynb_checkpoints
+    # Trova il tipo di file
+    for file_category, extensions in supported_extensions.items():
+        if ext.lower() in extensions:
+            file_type = file_category
+            break
 
-# IPython
-profile_default/
-ipython_config.py
+    # Stampa le informazioni del file
+    print(f'{name} type:{file_type} size:{file_size}B')
 
-# pyenv
-#   For a library or package, you might want to ignore these files since the code is
-#   intended to run in multiple environments; otherwise, check them in:
-# .python-version
+    # Sposta il file nella cartella corretta
+    if file_type:
+        dest_folder = os.path.join(files_folder, file_type)
+        shutil.move(file_path, os.path.join(dest_folder, filename))
 
-# pipenv
-#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
-#   However, in case of collaboration, if having platform-specific dependencies or dependencies
-#   having no cross-platform support, pipenv may install dependencies that don't work, or not
-#   install all needed dependencies.
-#Pipfile.lock
+    # Aggiungi le informazioni del file alla lista
+    file_info.append([name, file_type, file_size])
 
-# poetry
-#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
-#   This is especially recommended for binary packages to ensure reproducibility, and is more
-#   commonly ignored for libraries.
-#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
-#poetry.lock
+# Spostamento nella cartella corrente
+os.chdir(current_dir)
 
-# pdm
-#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
-#pdm.lock
-#   pdm stores project-wide configurations in .pdm.toml, but it is recommended to not include it
-#   in version control.
-#   https://pdm.fming.dev/#use-with-ide
-.pdm.toml
+# Aggiornamento o creazione del file di recap
+with open(recap_file, 'a', newline='') as file:
+    writer = csv.writer(file)
 
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
-__pypackages__/
+    # Scrivi l'intestazione del file se non esiste
+    if not recap_exists:
+        writer.writerow(['name', 'type', 'size'])
 
-# Celery stuff
-celerybeat-schedule
-celerybeat.pid
+    # Scrivi le informazioni dei file
+    writer.writerows(file_info)
 
-# SageMath parsed files
-*.sage.py
+print('Operazione completata!')
+# STEP 2 
 
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
 
-# Spyder project settings
-.spyderproject
-.spyproject
+# Percorso della cartella corrente
+current_folder = os.getcwd()
 
-# Rope project settings
-.ropeproject
+# Percorso della cartella "images"
+images_folder = os.path.join(current_folder, "files", "images")
 
-# mkdocs documentation
-/site
+# Lista per tenere traccia delle informazioni delle immagini
+image_info = []
 
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
+# Iterazione sui file nella cartella "images"
+for filename in sorted(os.listdir(images_folder)):
+    file_path = os.path.join(images_folder, filename)
 
-# Pyre type checker
-.pyre/
+    # Ignora le sottocartelle e i file nascosti
+    if os.path.isdir(file_path) or filename.startswith('.'):
+        continue
 
-# pytype static type analyzer
-.pytype/
+    # Carica l'immagine
+    image = Image.open(file_path)
 
-# Cython debug symbols
-cython_debug/
+    # Ottieni le dimensioni dell'immagine
+    width, height = image.size
 
-# PyCharm
-#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
-#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
-#  and can be added to the global gitignore or merged into this file.  For a more nuclear
-#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
+    # Converte l'immagine in un array NumPy
+    image_array = np.array(image)
+
+    # Verifica il numero di canali dell'immagine
+    num_channels = image_array.shape[2] if len(image_array.shape) == 3 else 1
+
+    # Calcola le medie dei valori dei canali di colore
+    if num_channels == 1:
+        grayscale = np.mean(image_array)
+        color_values = [0, 0, 0, 0]
+    else:
+        grayscale = 0
+        color_values = [np.mean(image_array[:, :, i]) for i in range(num_channels)]
+
+    # Aggiungi le informazioni dell'immagine alla lista
+    image_info.append([filename, height, width, grayscale] + color_values)
+
+# Creazione della tabella riassuntiva
+table_headers = ["name", "height", "width", "grayscale"] + ["R", "G", "B", "ALPHA"]
