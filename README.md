@@ -1,0 +1,1 @@
+PyFolders: organizza e gestisci i tuoi file con facilità! Questo progetto Python ti consente di creare cartelle personalizzate e spostare i file in modo efficiente. Inoltre, ti offre un'interfaccia intuitiva per visualizzare tutti i dati dei file, presentati in una pratica tabella. Semplifica la tua organizzazione e il tuo flusso di lavoro con PyFolders!
